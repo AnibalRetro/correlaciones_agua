@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo %}Viscosidad del agua (Meehan){% endblock %}
+
+{% block recursos_bokeh %}
+    {{ recurso_bokeh|safe }}
+{% endblock %}
+
+{% block contenido %}
+    <h2>Viscosidad del agua / salmuera (Meehan, 1980)</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit">Calcular viscosidad</button>
+    </form>
+
+    {% if mu %}
+        <p>
+            <strong>Resultado:</strong><br>
+            Presión = {{ presion }} psi<br>
+            Temperatura = {{ temperatura }} °F<br>
+            Salinidad = {{ salinidad }} %<br>
+            µw = {{ mu|floatformat:4 }} cP
+        </p>
+    {% endif %}
+
+    <h3>Gráfica µw vs Presión</h3>
+    {{ script_bokeh|safe }}
+    {{ div_bokeh|safe }}
+{% endblock %}

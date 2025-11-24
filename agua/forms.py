@@ -38,3 +38,48 @@ class FormularioRsw(forms.Form):
                                      initial=0,
                                      help_text="0–30 %, 1% = 10000 ppm",
                                      required=True)
+
+class FormularioViscosidadAgua(forms.Form):
+    """
+    Formulario para viscosidad del agua (Meehan).
+    """
+
+    presion_psi = forms.FloatField(label="Presión (psi)",
+                                   min_value=14.7,
+                                   max_value=15000,
+                                   required=True)
+
+    temperatura_f = forms.FloatField(label="Temperatura (°F)",
+                                     min_value=60,
+                                     max_value=400,
+                                     required=True)
+
+    salinidad_pct = forms.FloatField(label="Salinidad (%)",
+                                     min_value=0,
+                                     max_value=30,
+                                     initial=0,
+                                     help_text="0–30 %, 1% = 10,000 ppm",
+                                     required=True)
+
+
+class FormularioCompresibilidadAgua(forms.Form):
+    """
+    Formulario para compresibilidad del agua (Meehan).
+    """
+
+    presion_psi = forms.FloatField(label="Presión (psi)",
+                                   min_value=14.7,
+                                   max_value=15000,
+                                   required=True)
+
+    temperatura_f = forms.FloatField(label="Temperatura (°F)",
+                                     min_value=60,
+                                     max_value=400,
+                                     required=True)
+
+    salinidad_pct = forms.FloatField(label="Salinidad (%)",
+                                     min_value=0,
+                                     max_value=30,
+                                     initial=0,
+                                     help_text="0–30 %, 1% = 10,000 ppm",
+                                     required=True)

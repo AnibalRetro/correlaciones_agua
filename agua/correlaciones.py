@@ -10,7 +10,9 @@ Unidades:
 """
 from __future__ import annotations
 
-
+# ==========================
+# Bw - McCain (agua pura)
+# ==========================
 def volumen_formacion_agua_mccain(presion_psi: float, temperatura_f: float) -> float:
     """
     Calcula el factor volumétrico del agua (Bw) usando
@@ -49,7 +51,6 @@ def volumen_formacion_agua_mccain(presion_psi: float, temperatura_f: float) -> f
 # =======================================
 # Rsw - Culberson–McKetta (vía McCoy)
 # =======================================
-
 def _coeficientes_rsw_culberson_mcketta(temperatura_f: float) -> tuple[float, float, float]:
     """
     Calcula los coeficientes A, B, C de la correlación
@@ -64,7 +65,6 @@ def _coeficientes_rsw_culberson_mcketta(temperatura_f: float) -> tuple[float, fl
     c = 8.75e-7 + 3.9e-9 * t - 1.02e-11 * (t ** 2)
 
     return a, b, c
-
 
 def rsw_culberson_mcketta(presion_psi: float, temperatura_f: float, salinidad_pct: float = 0.0, ) -> float:
     """
@@ -99,3 +99,67 @@ def rsw_culberson_mcketta(presion_psi: float, temperatura_f: float, salinidad_pc
 
     rsw = rsw_pura * factor_sal
     return rsw
+
+# ===============================
+# Viscosidad del agua - Meehan
+# ===============================
+def viscosidad_agua_meehan(presion_psi: float, temperatura_f: float, salinidad_pct: float = 0.0) -> float:
+    """
+    Viscosidad del agua / salmuera según Meehan (1980).
+
+    µw = µ* * f
+
+    donde:
+    - µ* = A + B / T
+    - A y B dependen de la salinidad S (% peso)
+    - f es la corrección por presión.
+
+    Retorna µw en cP.
+    """
+    p = float(presion_psi)
+    tf = float(temperatura_f)
+    s = float(salinidad_pct)
+
+    # Término a temperatura y salinidad (µ*).
+    a = -0.04518 + 0.009313 * s - 0.000393 * (s ** 2)
+    b = 70.634 + 0.09576 * (s ** 2)
+    mu_estrella = a + b / tf
+
+    # Corrección por presión (f).
+    f = 1.0 + 3.5e-12 * (p ** 2) * (tf - 40.0)
+
+    mu_w = mu_estrella * f
+    return mu_w
+
+# =====================================
+# Compresibilidad del agua - Meehan
+# =====================================
+
+def compresibilidad_agua_meehan(presion_psi: float, temperatura_f: float, salinidad_pct: float = 0.0) -> float:
+    """
+    Compresibilidad isotérmica del agua/salmuera según Meehan (1980).
+
+    cw = S_c * (a + b*T + c*T^2) * 1e-6
+
+    donde S_c corrige por salinidad.
+    Retorna cw en 1/psi.
+    """
+    p = float(presion_psi)
+    tf = float(temperatura_f)
+    nacl = float(salinidad_pct)  # % peso
+
+    # Coeficientes dependientes de presión
+    a = 3.8546 - 0.000134 * p
+    b = -0.01052 + 4.77e-7 * p
+    c = 3.9267e-5 - 8.8e-10 * p
+
+    # Factor por salinidad S_c (NaCl en % peso)
+    s_c = 1.0 + (nacl ** 0.7) * (
+        -0.052
+        + 0.00027 * tf
+        - 1.14e-6 * (tf ** 2)
+        + 1.121e-9 * (tf ** 3)
+    )
+
+    cw = s_c * (a + b * tf + c * (tf ** 2)) * 1e-6
+    return cw

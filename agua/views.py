@@ -3,10 +3,17 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.resources import CDN
 
-from .forms import FormularioBw, FormularioRsw
+from .forms import (
+    FormularioBw,
+    FormularioRsw,
+    FormularioViscosidadAgua,
+    FormularioCompresibilidadAgua,
+)
 from .correlaciones import (
     volumen_formacion_agua_mccain,
     rsw_culberson_mcketta,
+    viscosidad_agua_meehan,
+    compresibilidad_agua_meehan,
 )
 
 def inicio(request):
@@ -57,12 +64,20 @@ def correlacion_bw(request):
         volumen_formacion_agua_mccain(p, temperatura) for p in presiones_grafica
     ]
 
+    min_bw = min(valores_bw)
+    max_bw = max(valores_bw)
+
     grafica = figure(title=f"Bw (McCain) vs Presión a {temperatura:.1f} °F",
                      x_axis_label="Presión (psi)",
                      y_axis_label="Bw (bbl/STB)",
                      sizing_mode="stretch_width",
-                     height=400)
-    grafica.line(presiones_grafica, valores_bw, line_width=2)
+                     height=400,
+                     tools="pan,wheel_zoom,box_zoom,reset,save")
+
+    _configurar_estilo_grafica(grafica, min_bw, max_bw)
+
+    grafica.line(presiones_grafica, valores_bw, line_width=3, legend_label="Bw (McCain)")
+    grafica.circle(presiones_grafica, valores_bw, size=6, legend_label="Bw (McCain)")
 
     script_bokeh, div_bokeh = components(grafica)
     recurso_bokeh = CDN.render()
@@ -119,6 +134,9 @@ def correlacion_rsw(request):
         for p in presiones_grafica
     ]
 
+    min_rsw = min(valores_rsw)
+    max_rsw = max(valores_rsw)
+
     grafica = figure(
         title=(
             f"Rsw (Culberson–McKetta) vs Presión "
@@ -128,8 +146,13 @@ def correlacion_rsw(request):
         y_axis_label="Rsw (scf/bbl)",
         sizing_mode="stretch_width",
         height=400,
+        tools="pan,wheel_zoom,box_zoom,reset,save",
     )
-    grafica.line(presiones_grafica, valores_rsw, line_width=2)
+
+    _configurar_estilo_grafica(grafica, min_rsw, max_rsw)
+
+    grafica.line(presiones_grafica, valores_rsw, line_width=3, legend_label="Rsw")
+    grafica.circle(presiones_grafica, valores_rsw, size=6, legend_label="Rsw")
 
     script_bokeh, div_bokeh = components(grafica)
     recurso_bokeh = CDN.render()
@@ -146,3 +169,184 @@ def correlacion_rsw(request):
     }
 
     return render(request, "agua/correlacion_rsw.html", contexto)
+
+def correlacion_viscosidad(request):
+    """
+    Viscosidad del agua (Meehan) y gráfica µw vs P.
+    """
+    resultado_mu = None
+    presion = None
+    temperatura = None
+    salinidad = None
+
+    if request.method == "POST":
+        formulario = FormularioViscosidadAgua(request.POST)
+        if formulario.is_valid():
+            presion = formulario.cleaned_data["presion_psi"]
+            temperatura = formulario.cleaned_data["temperatura_f"]
+            salinidad = formulario.cleaned_data["salinidad_pct"]
+            resultado_mu = viscosidad_agua_meehan(
+                presion,
+                temperatura,
+                salinidad,
+            )
+    else:
+        temperatura = 200.0
+        salinidad = 5.0
+        formulario = FormularioViscosidadAgua(
+            initial={
+                "temperatura_f": temperatura,
+                "salinidad_pct": salinidad,
+                "presion_psi": 3000,
+            }
+        )
+
+    presiones_grafica = list(range(500, 15500, 1000))
+    valores_mu = [
+        viscosidad_agua_meehan(p, temperatura, salinidad)
+        for p in presiones_grafica
+    ]
+
+    min_mu = min(valores_mu)
+    max_mu = max(valores_mu)
+
+    grafica = figure(title=(f"Viscosidad del agua (Meehan) vs Presión "
+            f"a {temperatura:.1f} °F y S={salinidad:.1f} %"
+        ),
+                     x_axis_label="Presión (psi)",
+                     y_axis_label="µw (cP)",
+                     sizing_mode="stretch_width",
+                     height=400,
+                     tools="pan,wheel_zoom,box_zoom,reset,save")
+    grafica.line(presiones_grafica, valores_mu, line_width=3, legend_label="µw")
+    grafica.circle( presiones_grafica, valores_mu, size=6, legend_label="µw")
+
+    script_bokeh, div_bokeh = components(grafica)
+    recurso_bokeh = CDN.render()
+
+    contexto = {
+        "formulario": formulario,
+        "mu": resultado_mu,
+        "presion": presion,
+        "temperatura": temperatura,
+        "salinidad": salinidad,
+        "script_bokeh": script_bokeh,
+        "div_bokeh": div_bokeh,
+        "recurso_bokeh": recurso_bokeh,
+    }
+
+    return render(request, "agua/correlacion_viscosidad.html", contexto)
+
+def correlacion_compresibilidad(request):
+    """
+    Compresibilidad del agua (Meehan) y gráfica cw vs P.
+    """
+    resultado_cw = None
+    presion = None
+    temperatura = None
+    salinidad = None
+
+    if request.method == "POST":
+        formulario = FormularioCompresibilidadAgua(request.POST)
+        if formulario.is_valid():
+            presion = formulario.cleaned_data["presion_psi"]
+            temperatura = formulario.cleaned_data["temperatura_f"]
+            salinidad = formulario.cleaned_data["salinidad_pct"]
+            resultado_cw = compresibilidad_agua_meehan(
+                presion,
+                temperatura,
+                salinidad,
+            )
+    else:
+        temperatura = 200.0
+        salinidad = 5.0
+        formulario = FormularioCompresibilidadAgua(
+            initial={
+                "temperatura_f": temperatura,
+                "salinidad_pct": salinidad,
+                "presion_psi": 3000,
+            }
+        )
+
+    presiones_grafica = list(range(500, 15500, 1000))
+    valores_cw = [
+        compresibilidad_agua_meehan(p, temperatura, salinidad)
+        for p in presiones_grafica
+    ]
+
+    min_cw = min(valores_cw)
+    max_cw = max(valores_cw)
+
+    grafica = figure(
+        title=(
+            f"Compresibilidad del agua (Meehan) vs Presión "
+            f"a {temperatura:.1f} °F y S={salinidad:.1f} %"
+        ),
+        x_axis_label="Presión (psi)",
+        y_axis_label="cw (1/psi)",
+        sizing_mode="stretch_width",
+        height=400,
+        tools="pan,wheel_zoom,box_zoom,reset,save",
+    )
+
+    _configurar_estilo_grafica(grafica, min_cw, max_cw)
+
+    grafica.line(
+        presiones_grafica,
+        valores_cw,
+        line_width=3,
+        legend_label="cw",
+    )
+    grafica.circle(
+        presiones_grafica,
+        valores_cw,
+        size=6,
+        legend_label="cw",
+    )
+
+    script_bokeh, div_bokeh = components(grafica)
+    recurso_bokeh = CDN.render()
+
+    contexto = {
+        "formulario": formulario,
+        "cw": resultado_cw,
+        "presion": presion,
+        "temperatura": temperatura,
+        "salinidad": salinidad,
+        "script_bokeh": script_bokeh,
+        "div_bokeh": div_bokeh,
+        "recurso_bokeh": recurso_bokeh,
+    }
+
+    return render(request, "agua/correlacion_compresibilidad.html", contexto)
+
+# agua/views.py
+
+def _configurar_estilo_grafica(grafica, min_y, max_y):
+    """
+    Ajusta el rango en Y y el estilo visual de la gráfica.
+
+    min_y y max_y son los valores mínimos y máximos de la propiedad.
+    """
+    # margen de 10% (si todos los puntos son iguales, ponemos algo pequeño)
+    diferencia = max_y - min_y
+    if diferencia <= 0:
+        margen = max_y * 0.1 if max_y != 0 else 0.1
+    else:
+        margen = diferencia * 0.1
+
+    grafica.y_range.start = min_y - margen
+    grafica.y_range.end = max_y + margen
+
+    # Estilos generales
+    grafica.background_fill_alpha = 0.0
+    grafica.border_fill_alpha = 0.0
+
+    grafica.grid.grid_line_alpha = 0.3
+    grafica.grid.grid_line_dash = "dotted"
+
+    grafica.outline_line_alpha = 0.0
+    grafica.toolbar_location = "above"
+
+    grafica.legend.location = "bottom_right"
+    grafica.legend.click_policy = "hide"
