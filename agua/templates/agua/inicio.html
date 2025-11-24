@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block titulo %}Inicio - Correlaciones del agua{% endblock %}
+
+{% block recursos_bokeh %}
+    {{ recurso_bokeh|safe }}
+{% endblock %}
+
+{% block contenido %}
+    <p>Esta es una gráfica de prueba generada con Bokeh.</p>
+
+    {{ script_bokeh|safe }}
+    {{ div_bokeh|safe }}
+{% endblock %}

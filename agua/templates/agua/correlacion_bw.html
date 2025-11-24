@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block titulo %}Bw (McCain) - Correlaciones del agua{% endblock %}
+
+{% block recursos_bokeh %}
+    {{ recurso_bokeh|safe }}
+{% endblock %}
+
+{% block contenido %}
+    <h2>Factor volumétrico del agua Bw (McCain)</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit">Calcular Bw</button>
+    </form>
+
+    {% if bw %}
+        <p>
+            <strong>Resultado:</strong><br>
+            Presión = {{ presion }} psi<br>
+            Temperatura = {{ temperatura }} °F<br>
+            Bw = {{ bw|floatformat:5 }} bbl/STB
+        </p>
+    {% endif %}
+
+    <h3>Gráfica Bw vs Presión</h3>
+    {{ script_bokeh|safe }}
+    {{ div_bokeh|safe }}
+{% endblock %}

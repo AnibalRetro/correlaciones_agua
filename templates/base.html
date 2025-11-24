@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block titulo %}Correlaciones del agua{% endblock %}</title>
+    {% block recursos_bokeh %}{% endblock %}
+</head>
+<body>
+<header>
+    <h1>Correlaciones del agua</h1>
+    <nav>
+        <a href="{% url 'agua:inicio' %}">Inicio</a> |
+        <a href="{% url 'agua:correlacion_bw' %}">Bw (McCain)</a> |
+        <a href="{% url 'agua:correlacion_rsw' %}">Rsw (Culberson–McKetta)</a>
+    </nav>
+    <hr>
+</header>
+
+<main>
+    {% block contenido %}{% endblock %}
+</main>
+</body>
+</html>
