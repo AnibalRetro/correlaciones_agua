@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block titulo %}Resumen de propiedades del agua{% endblock %}
+
+{% block contenido %}
+    <h2>Resumen de correlaciones PVT para el agua</h2>
+
+    <p>
+        En esta página puedes elegir qué propiedad del agua quieres
+        calcular y graficar. Todas las correlaciones usan presión en psi,
+        temperatura en °F y salinidad en % en peso.
+    </p>
+
+    <section>
+        <h3>Propiedades disponibles</h3>
+
+        <ul>
+            <li>
+                <strong>Factor volumétrico del agua Bw (McCain)</strong><br>
+                <em>Entrada:</em> Presión, temperatura, salinidad.<br>
+                <em>Salida:</em> Bw en bbl/STB.<br>
+                <a href="{% url 'agua:correlacion_bw' %}">Ir a Bw (McCain)</a>
+            </li>
+            <br>
+
+            <li>
+                <strong>Solubilidad gas–agua Rsw (Culberson–McKetta)</strong><br>
+                <em>Entrada:</em> Presión, temperatura, salinidad.<br>
+                <em>Salida:</em> Rsw en scf/bbl.<br>
+                <a href="{% url 'agua:correlacion_rsw' %}">Ir a Rsw (Culberson–McKetta)</a>
+            </li>
+            <br>
+
+            <li>
+                <strong>Viscosidad del agua / salmuera (Meehan)</strong><br>
+                <em>Entrada:</em> Presión, temperatura, salinidad.<br>
+                <em>Salida:</em> µw en cP.<br>
+                <a href="{% url 'agua:correlacion_viscosidad' %}">Ir a viscosidad (Meehan)</a>
+            </li>
+            <br>
+
+            <li>
+                <strong>Compresibilidad del agua / salmuera (Meehan)</strong><br>
+                <em>Entrada:</em> Presión, temperatura, salinidad.<br>
+                <em>Salida:</em> cw en 1/psi.<br>
+                <a href="{% url 'agua:correlacion_compresibilidad' %}">Ir a compresibilidad (Meehan)</a>
+            </li>
+            <br>
+
+            <li>
+                <strong>Densidad del agua / salmuera</strong><br>
+                <em>Entrada:</em> Presión, temperatura, salinidad.<br>
+                <em>Salida:</em> ρ<sub>SC</sub> en lb/ft³ y ρ<sub>R</sub> en lb/ft³.<br>
+                <a href="{% url 'agua:correlacion_densidad' %}">Ir a densidad agua/salmuera</a>
+            </li>
+        </ul>
+    </section>
+
+    <hr>
+
+    <section>
+        <h3>Notas rápidas</h3>
+        <ul>
+            <li>Presión en psi (psia / de yacimiento según correlación).</li>
+            <li>Temperatura en °F.</li>
+            <li>Salinidad en % en peso (1 % ≈ 10,000 ppm).</li>
+            <li>Las curvas se generan con Bokeh y se pueden hacer zoom, pan y guardar como imagen.</li>
+        </ul>
+    </section>
+{% endblock %}

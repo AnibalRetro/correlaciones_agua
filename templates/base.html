@@ -1,26 +1,38 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>{% block titulo %}Correlaciones del agua{% endblock %}</title>
+
+    <!-- Hoja de estilos general del proyecto -->
+    <link rel="stylesheet" href="{% static 'agua/css/estilos.css' %}">
+
     {% block recursos_bokeh %}{% endblock %}
 </head>
 <body>
-<header>
-    <h1>Correlaciones del agua</h1>
-    <nav>
-        <a href="{% url 'agua:inicio' %}">Inicio</a> |
-        <a href="{% url 'agua:correlacion_bw' %}">Bw (McCain)</a> |
-        <a href="{% url 'agua:correlacion_rsw' %}">Rsw (Culberson–McKetta)</a> |
-        <a href="{% url 'agua:correlacion_viscosidad' %}">Viscosidad (Meehan)</a> |
-        <a href="{% url 'agua:correlacion_compresibilidad' %}">Compresibilidad (Meehan)</a>
-        <a href="{% url 'agua:correlacion_densidad' %}">Densidad agua/salmuera</a>
-    </nav>
-    <hr>
-</header>
+<div class="contenedor-principal">
+    <header class="encabezado">
+        <h1>Correlaciones del agua</h1>
+        <nav class="menu">
+            <a class="menu__link" href="{% url 'agua:resumen' %}">Resumen</a> |
+            <a class="menu__link" href="{% url 'agua:correlacion_bw' %}">Bw (McCain)</a> |
+            <a class="menu__link" href="{% url 'agua:correlacion_rsw' %}">Rsw (Culberson–McKetta)</a> |
+            <a class="menu__link" href="{% url 'agua:correlacion_viscosidad' %}">Viscosidad (Meehan)</a> |
+            <a class="menu__link" href="{% url 'agua:correlacion_compresibilidad' %}">Compresibilidad (Meehan)</a> |
+            <a class="menu__link" href="{% url 'agua:correlacion_densidad' %}">Densidad agua/salmuera</a> |
+        </nav>
+        <hr>
+    </header>
 
-<main>
-    {% block contenido %}{% endblock %}
-</main>
+    <main class="contenido">
+        {% block contenido %}{% endblock %}
+    </main>
+
+    <footer class="pie">
+        <small>Proyecto de correlaciones de agua - UNAM</small>
+        <small>Creado y diseñado por Itzel Amador Alcántara</small>
+    </footer>
+</div>
 </body>
 </html>

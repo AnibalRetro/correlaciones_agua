@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from bokeh.plotting import figure
+from bokeh.plotting import figure, show
 from bokeh.embed import components
 from bokeh.resources import CDN
 
@@ -42,6 +42,12 @@ def inicio(request):
     }
     return render(request, "agua/inicio.html", contexto)
 
+def resumen_propiedades(request):
+    """
+    Página resumen con accesos a todas las correlaciones.
+    """
+    return render(request, "agua/resumen.html")
+
 def correlacion_bw(request):
     """
     Vista para calcular Bw (McCain) y mostrar una gráfica Bw vs P.
@@ -77,6 +83,12 @@ def correlacion_bw(request):
         volumen_formacion_agua_mccain(p, temperatura) for p in presiones_grafica
     ]
 
+    # Tabla de datos para la vista
+    datos_grafica = [
+        {"presion": p, "bw": bw_val}
+        for p, bw_val in zip(presiones_grafica, valores_bw)
+    ]
+
     min_bw = min(valores_bw)
     max_bw = max(valores_bw)
 
@@ -92,20 +104,20 @@ def correlacion_bw(request):
         tools="pan,wheel_zoom,box_zoom,reset,save",
     )
 
-    _configurar_estilo_grafica(grafica, min_bw, max_bw)
-
     grafica.line(
         presiones_grafica,
         valores_bw,
         line_width=3,
         legend_label="Bw (McCain)",
     )
-    grafica.circle(
+    grafica.scatter(
         presiones_grafica,
         valores_bw,
         size=6,
         legend_label="Bw (McCain)",
     )
+
+    _configurar_estilo_grafica(grafica, min_bw, max_bw)
 
     script_bokeh, div_bokeh = components(grafica)
     recurso_bokeh = CDN.render()
@@ -119,6 +131,7 @@ def correlacion_bw(request):
         "script_bokeh": script_bokeh,
         "div_bokeh": div_bokeh,
         "recurso_bokeh": recurso_bokeh,
+        "datos_grafica": datos_grafica,
     }
 
     return render(request, "agua/correlacion_bw.html", contexto)
@@ -163,6 +176,11 @@ def correlacion_rsw(request):
         for p in presiones_grafica
     ]
 
+    datos_grafica = [
+        {"presion": p, "rsw": rsw_val}
+        for p, rsw_val in zip(presiones_grafica, valores_rsw)
+    ]
+
     min_rsw = min(valores_rsw)
     max_rsw = max(valores_rsw)
 
@@ -178,10 +196,10 @@ def correlacion_rsw(request):
         tools="pan,wheel_zoom,box_zoom,reset,save",
     )
 
-    _configurar_estilo_grafica(grafica, min_rsw, max_rsw)
-
     grafica.line(presiones_grafica, valores_rsw, line_width=3, legend_label="Rsw")
-    grafica.circle(presiones_grafica, valores_rsw, size=6, legend_label="Rsw")
+    grafica.scatter(presiones_grafica, valores_rsw, size=6, legend_label="Rsw")
+
+    _configurar_estilo_grafica(grafica, min_rsw, max_rsw)
 
     script_bokeh, div_bokeh = components(grafica)
     recurso_bokeh = CDN.render()
@@ -195,6 +213,7 @@ def correlacion_rsw(request):
         "script_bokeh": script_bokeh,
         "div_bokeh": div_bokeh,
         "recurso_bokeh": recurso_bokeh,
+        "datos_grafica": datos_grafica,
     }
 
     return render(request, "agua/correlacion_rsw.html", contexto)
@@ -236,6 +255,11 @@ def correlacion_viscosidad(request):
         for p in presiones_grafica
     ]
 
+    datos_grafica = [
+        {"presion": p, "mu": mu_val}
+        for p, mu_val in zip(presiones_grafica, valores_mu)
+    ]
+
     min_mu = min(valores_mu)
     max_mu = max(valores_mu)
 
@@ -247,8 +271,11 @@ def correlacion_viscosidad(request):
                      sizing_mode="stretch_width",
                      height=400,
                      tools="pan,wheel_zoom,box_zoom,reset,save")
+
     grafica.line(presiones_grafica, valores_mu, line_width=3, legend_label="µw")
-    grafica.circle( presiones_grafica, valores_mu, size=6, legend_label="µw")
+    grafica.scatter( presiones_grafica, valores_mu, size=6, legend_label="µw")
+
+    _configurar_estilo_grafica(grafica, min_mu, max_mu)
 
     script_bokeh, div_bokeh = components(grafica)
     recurso_bokeh = CDN.render()
@@ -262,6 +289,7 @@ def correlacion_viscosidad(request):
         "script_bokeh": script_bokeh,
         "div_bokeh": div_bokeh,
         "recurso_bokeh": recurso_bokeh,
+        "datos_grafica": datos_grafica,
     }
 
     return render(request, "agua/correlacion_viscosidad.html", contexto)
@@ -298,9 +326,15 @@ def correlacion_compresibilidad(request):
         )
 
     presiones_grafica = list(range(500, 15500, 1000))
+
     valores_cw = [
         compresibilidad_agua_meehan(p, temperatura, salinidad)
         for p in presiones_grafica
+    ]
+
+    datos_grafica = [
+        {"presion": p, "cw": cw_val}
+        for p, cw_val in zip(presiones_grafica, valores_cw)
     ]
 
     min_cw = min(valores_cw)
@@ -318,10 +352,10 @@ def correlacion_compresibilidad(request):
         tools="pan,wheel_zoom,box_zoom,reset,save",
     )
 
-    _configurar_estilo_grafica(grafica, min_cw, max_cw)
-
     grafica.line(presiones_grafica, valores_cw, line_width=3, legend_label="cw")
-    grafica.circle(presiones_grafica, valores_cw, size=6, legend_label="cw")
+    grafica.scatter(presiones_grafica, valores_cw, size=6, legend_label="cw")
+
+    _configurar_estilo_grafica(grafica, min_cw, max_cw)
 
     script_bokeh, div_bokeh = components(grafica)
     recurso_bokeh = CDN.render()
@@ -335,6 +369,7 @@ def correlacion_compresibilidad(request):
         "script_bokeh": script_bokeh,
         "div_bokeh": div_bokeh,
         "recurso_bokeh": recurso_bokeh,
+        "datos_grafica": datos_grafica,
     }
 
     return render(request, "agua/correlacion_compresibilidad.html", contexto)
@@ -372,9 +407,15 @@ def correlacion_densidad(request):
 
     # Gráfica: densidad en yacimiento vs salinidad para P y T fijos
     salinidades_grafica = list(range(0, 31, 5))  # 0, 5, 10, ..., 30 %
+
     valores_dens = [
         densidad_agua_reservorio(presion, temperatura, s)
         for s in salinidades_grafica
+    ]
+
+    datos_grafica = [
+        {"salinidad": s, "rho": rho_val}
+        for s, rho_val in zip(salinidades_grafica, valores_dens)
     ]
 
     min_rho = min(valores_dens)
@@ -392,20 +433,10 @@ def correlacion_densidad(request):
         tools="pan,wheel_zoom,box_zoom,reset,save",
     )
 
-    _configurar_estilo_grafica(grafica, min_rho, max_rho)
+    grafica.line(salinidades_grafica, valores_dens, line_width=3, legend_label="ρw (reservorio)")
+    grafica.scatter(salinidades_grafica, valores_dens, size=6, legend_label="ρw (reservorio)")
 
-    grafica.line(
-        salinidades_grafica,
-        valores_dens,
-        line_width=3,
-        legend_label="ρw (reservorio)",
-    )
-    grafica.circle(
-        salinidades_grafica,
-        valores_dens,
-        size=6,
-        legend_label="ρw (reservorio)",
-    )
+    _configurar_estilo_grafica(grafica, min_rho, max_rho)
 
     script_bokeh, div_bokeh = components(grafica)
     recurso_bokeh = CDN.render()
@@ -420,6 +451,7 @@ def correlacion_densidad(request):
         "script_bokeh": script_bokeh,
         "div_bokeh": div_bokeh,
         "recurso_bokeh": recurso_bokeh,
+        "datos_grafica": datos_grafica,
     }
 
     return render(request, "agua/correlacion_densidad.html", contexto)

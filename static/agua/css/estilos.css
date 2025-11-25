@@ -1,0 +1,126 @@
+/* Estilos generales del proyecto correlaciones_agua */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f3f4f6;
+    color: #222222;
+}
+
+.contenedor-principal {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    background-color: #ffffff;
+    box-sizing: border-box;
+}
+
+.encabezado h1 {
+    margin: 0 0 0.5rem 0;
+}
+
+.menu {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.menu__link {
+    text-decoration: none;
+    color: #0056b3;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+}
+
+.menu__link:hover {
+    background-color: #0056b3;
+    color: #ffffff;
+}
+
+.contenido {
+    margin-top: 1rem;
+}
+
+/* Formularios */
+
+form {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.8rem 1rem;
+    background-color: #f8fafc;
+    border: 1px solid #d0d7e2;
+    border-radius: 6px;
+}
+
+form p {
+    margin: 0.4rem 0;
+}
+
+form label {
+    font-weight: bold;
+}
+
+button,
+input[type="submit"] {
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 4px;
+    border: 1px solid #0f5ba7;
+    background-color: #1d72d8;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+button:hover,
+input[type="submit"]:hover {
+    background-color: #0f5ba7;
+}
+
+/* Tablas de datos (si las usas) */
+
+table {
+    border-collapse: collapse;
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 700px;
+}
+
+table th,
+table td {
+    border: 1px solid #d1d5db;
+    padding: 4px 8px;
+}
+
+table th {
+    background-color: #e5e7eb;
+    text-align: center;
+}
+
+table td {
+    text-align: right;
+}
+
+/* Títulos dentro del contenido */
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+/* Pie de página */
+
+.pie {
+    margin-top: 2rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid #e5e7eb;
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+}

@@ -29,3 +29,21 @@
     {{ script_bokeh|safe }}
     {{ div_bokeh|safe }}
 {% endblock %}
+
+<h3>Tabla de datos Rsw vs Presión</h3>
+    <table border="1" cellpadding="4" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Presión (psi)</th>
+            <th>Rsw (scf/bbl)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for fila in datos_grafica %}
+            <tr>
+                <td>{{ fila.presion }}</td>
+                <td>{{ fila.rsw|floatformat:4 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

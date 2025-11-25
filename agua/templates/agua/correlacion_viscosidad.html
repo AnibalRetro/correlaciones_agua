@@ -29,3 +29,21 @@
     {{ script_bokeh|safe }}
     {{ div_bokeh|safe }}
 {% endblock %}
+
+    <h3>Tabla de datos µw vs Presión</h3>
+    <table border="1" cellpadding="4" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Presión (psi)</th>
+            <th>µw (cP)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for fila in datos_grafica %}
+            <tr>
+                <td>{{ fila.presion }}</td>
+                <td>{{ fila.mu|floatformat:4 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

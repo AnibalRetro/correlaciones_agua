@@ -28,4 +28,23 @@
     <h3>Gráfica Bw vs Presión</h3>
     {{ script_bokeh|safe }}
     {{ div_bokeh|safe }}
+
+    <h3>Tabla de datos Bw vs Presión</h3>
+    <table border="1" cellpadding="4" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Presión (psi)</th>
+            <th>Bw (bbl/STB)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for fila in datos_grafica %}
+            <tr>
+                <td>{{ fila.presion }}</td>
+                <td>{{ fila.bw|floatformat:5 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
+

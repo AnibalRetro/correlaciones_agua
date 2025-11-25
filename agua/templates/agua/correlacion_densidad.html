@@ -38,3 +38,21 @@
     {{ script_bokeh|safe }}
     {{ div_bokeh|safe }}
 {% endblock %}
+
+    <h3>Tabla de datos ρw vs Salinidad</h3>
+    <table border="1" cellpadding="4" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Salinidad (%)</th>
+            <th>ρw (lb/ft³)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for fila in datos_grafica %}
+            <tr>
+                <td>{{ fila.salinidad }}</td>
+                <td>{{ fila.rho|floatformat:3 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
