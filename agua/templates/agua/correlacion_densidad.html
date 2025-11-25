@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo %}Densidad del agua/salmuera{% endblock %}
+
+{% block recursos_bokeh %}
+    {{ recurso_bokeh|safe }}
+{% endblock %}
+
+{% block contenido %}
+    <h2>Densidad del agua / salmuera</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit">Calcular densidad</button>
+    </form>
+
+    {% if densidad_sc or densidad_reservorio %}
+        <p>
+            <strong>Resultados:</strong><br>
+            Presión = {{ presion }} psi<br>
+            Temperatura = {{ temperatura }} °F<br>
+            Salinidad = {{ salinidad }} %<br>
+            {% if densidad_sc %}
+                ρ<sub>SC</sub> (14.7 psia, 60°F) = {{ densidad_sc|floatformat:3 }} lb/ft³<br>
+            {% endif %}
+            {% if densidad_reservorio %}
+                ρ<sub>R</sub> (condiciones de yacimiento) = {{ densidad_reservorio|floatformat:3 }} lb/ft³
+            {% endif %}
+        </p>
+    {% endif %}
+
+    <h3>Densidad en yacimiento vs salinidad</h3>
+    <p>
+        Curva calculada a P = {{ presion }} psi y T = {{ temperatura }} °F.
+    </p>
+
+    {{ script_bokeh|safe }}
+    {{ div_bokeh|safe }}
+{% endblock %}
