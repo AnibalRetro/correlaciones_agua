@@ -16,13 +16,14 @@
     </form>
 
     {% if bw %}
-        <p>
-            <strong>Resultado:</strong><br>
-            Presión = {{ presion }} psi<br>
-            Temperatura = {{ temperatura }} °F<br>
-            Bw = {{ bw|floatformat:5 }} bbl/STB
-        </p>
-    {% endif %}
+    <p>
+        <strong>Resultado:</strong><br>
+        Presión = {{ presion }} psi<br>
+        Temperatura = {{ temperatura }} °F<br>
+        Salinidad = {{ salinidad }} %<br>
+        Bw = {{ bw|floatformat:5 }} bbl/STB
+    </p>
+    +{% endif %}
 
     <h3>Gráfica Bw vs Presión</h3>
     {{ script_bokeh|safe }}

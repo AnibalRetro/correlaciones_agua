@@ -49,7 +49,7 @@ def volumen_formacion_agua_mccain(presion_psi: float, temperatura_f: float) -> f
     return bw
 
 # =======================================
-# Rsw - Culberson–McKetta (vía McCoy)
+# Coeficientes - Culberson–McKetta (vía McCoy)
 # =======================================
 def _coeficientes_rsw_culberson_mcketta(temperatura_f: float) -> tuple[float, float, float]:
     """
@@ -66,6 +66,9 @@ def _coeficientes_rsw_culberson_mcketta(temperatura_f: float) -> tuple[float, fl
 
     return a, b, c
 
+# =======================================
+# Rsw - Culberson–McKetta (vía McCoy)
+# =======================================
 def rsw_culberson_mcketta(presion_psi: float, temperatura_f: float, salinidad_pct: float = 0.0, ) -> float:
     """
     Calcula la solubilidad del gas natural en agua (Rsw)
@@ -134,7 +137,6 @@ def viscosidad_agua_meehan(presion_psi: float, temperatura_f: float, salinidad_p
 # =====================================
 # Compresibilidad del agua - Meehan
 # =====================================
-
 def compresibilidad_agua_meehan(presion_psi: float, temperatura_f: float, salinidad_pct: float = 0.0) -> float:
     """
     Compresibilidad isotérmica del agua/salmuera según Meehan (1980).
@@ -163,3 +165,51 @@ def compresibilidad_agua_meehan(presion_psi: float, temperatura_f: float, salini
 
     cw = s_c * (a + b * tf + c * (tf ** 2)) * 1e-6
     return cw
+
+# ==========================================
+# Densidad del agua / salmuera
+# ==========================================
+def densidad_agua_sc(salinidad_pct: float) -> float:
+    """
+    Densidad de salmuera a condiciones estándar
+    (14.7 psia y 60 °F) usando una correlación
+    sencilla basada en la salinidad.
+
+    Usamos la forma típica:
+        rho_wSC = C_mgL / 25000 + 62.428
+
+    donde:
+    - C_mgL se aproxima como salinidad_pct * 10,000
+      (1 % peso ≈ 10,000 ppm ≈ 10,000 mg/L)
+
+    Retorna
+    -------
+    float
+        Densidad en lb/ft³.
+    """
+    s_pct = float(salinidad_pct)
+    c_mg_l = s_pct * 10000.0
+    rho_sc = c_mg_l / 25000.0 + 62.428
+    return rho_sc
+
+# =======================================
+# Densidad del agua / reservorio
+# =======================================
+def densidad_agua_reservorio(presion_psi: float, temperatura_f: float, salinidad_pct: float) -> float:
+    """
+    Densidad de la salmuera a condiciones de yacimiento.
+
+    Aproximamos:
+        rho_wR = rho_wSC / Bw
+
+    usando Bw de McCain (que depende de P y T).
+
+    Retorna
+    -------
+    float
+        Densidad en lb/ft³.
+    """
+    bw = volumen_formacion_agua_mccain(presion_psi, temperatura_f)
+    rho_sc = densidad_agua_sc(salinidad_pct)
+    rho_res = rho_sc / bw
+    return rho_res
